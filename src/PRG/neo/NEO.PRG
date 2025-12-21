@@ -1,0 +1,1769 @@
+
+//---------------------------------------------------------------------------
+// PROGRAMA Neo Atlantis
+// Programadores: Jos‚ Ignacio Alvarez Ruiz&Jordi Corrales Jim‚nez
+//                                       Nanhy
+// Fecha inicio:1/5/99
+// Fecha fin: ??-??-??
+// Grupo de programacion: AVALON INTERACTIVE (NanhySoft Team)
+// C¢digo ASCII de alpha: 224 (à)
+// C¢digo ASCII de beta:  225 (á)
+// C¢digo ASCII de omega: 234 (ê)
+// Ultimo codigo de sitio=10 (supeRMercado)
+// Tama¤o para generar los mu¤ecos = 125 %
+//---------------------------------------------------------------------------
+
+COMPILER_OPTIONS _ignore_errors;
+
+PROGRAM Neo_Atlantis;
+
+GLOBAL
+
+colorea=90;
+grafico_munyeco=1;
+banderas;
+coge_neo_sword;
+suena;
+munyeco;
+m_esther;
+m_tania;
+libro_leido;
+llamado=0;
+topa;
+mapa;
+durezas;
+tama¤o;
+fichero;
+equis;
+igriega;
+sitio;
+escribe;
+m_juan_llama;
+espera;
+a;
+b;
+presenta;
+logo;
+int moviendo;
+fquorbel;
+fgente;
+festher;
+ftania;
+
+struct datos_neo
+ coge_neo_sword;
+ libro_leido;
+ llamado;
+ m_juan_llama;
+ equis;
+ igriega;
+ sitio;
+ mapa;
+ durezas;
+end
+
+word juan_txt[]=
+  "Mi mujer me ha llamado", //0-1
+  "ire a ver lo que quiere",
+
+  "Tengo ganas de leer un poco", //2
+
+  "Si...bueno...pero he tenido un", //3-4
+  "sue¤o muy extra¤o",
+
+  "Un sue¤o en el que por la", //5-12
+  "desglaciaci¢n de los hielos",
+  "y la subida de los mares",
+  "hab¡a grandes inundaciones,",
+  "se producian cat strofes,",
+  "incendios, terremotos y",
+  "tsunamis, la gente enloquec¡a",
+  "y luchaba por sobrevivir",
+
+  "¨Te acuerdas de lo que siempre he estado", //13-15
+  "diciendo que iba a pasar?",
+  "Pues ha llegado el momento",
+
+  "S¡, conf¡a en mi. Nos debemos apresurar",  //16-17
+  "en avisar a los dem s",
+
+  "Ahora que caigo, ¨que deberiamos hacer", //18-20
+  "ahora? Yo sab¡a que esto pasaria pero no",
+  "c¢mo deb¡a actuar cuando llegase el momento";
+
+word esther_txt[]=
+  "Juan,¨puedes venir al sal¢n?",
+
+  "Buenos d¡as,¨has dormido bien?",
+
+  "¨Qu‚ sue¤o?",
+
+  "Eso debe significar que",
+  "ya ha llegado el momento";
+
+word tania_txt[]=
+  "­Hola Papa! Te veo con cara precupada",  //0-1
+  "¨Ocurre algo?",
+
+  "Oh! Vaya yo creia que eso no eran m s que", //2-3
+  "leyendas. ¨Estas seguro de lo que dices?",
+
+  "Pues deber¡as averiguarlo, todas las", //4-6
+  "leyendas que conocemos fueron recogidas",
+  "en el a¤o 1728 en el libro Cristal";
+
+
+BEGIN
+    setup.master=15;
+    setup.mixer=quality_mixer;
+    setup.bits=sound_bits_16;
+    setup.rate=44100;
+    setup.sound_fx=15;
+    setup.cd_audio=15;
+    set_volume();
+    reset_sound();
+
+    set_mode(m640x480);
+    //load_fpg("neo\general.fpg");
+    //load_pal("neo\general.fpg");
+    //xput(0,1,320,240,0,100,0,0);
+    //fade(100,100,100,1);
+
+    //WHILE (scan_code==0)
+    // FRAME;
+    //END
+    //fade(0,0,0,1);
+    //FRAME;
+    //WHILE (espera<70)
+    // FRAME;
+    // espera++;
+    //END
+    load_fnt("neo\neoa.fnt");
+    load_fnt("neo\start.fnt");
+    load_song("c:\div2\mod\neo\cris.s3m",1);
+    //set_mode(m320x240);
+    //clear_screen();
+    //fade_on();
+    //xput(0,2,320,240,0,100,0,0);
+    //write(2,500,300,4,"F1: Empezar");
+    //write(2,500,350,4,"F2: Opciones");
+    //fade(100,100,100,1);
+    //unload_fpg(0);
+
+    //WHILE (scan_code==0)
+    // FRAME;
+    //END
+    //fade(0,0,0,1);
+    //FRAME;
+    //WHILE (espera<70)
+    // FRAME;
+    // espera++;
+    //END
+    //start_fli("c:\div2\flc\intro1.fli",0,0);
+
+    //WHILE (frame_fli()<>0)
+
+    // FRAME;
+    // IF(key(_esc))
+    // break;
+    // END
+    //  FRAME;
+    //END
+
+    delete_text(all_text);
+    set_mode(m640x480);
+    set_fps(30,1);
+    load_fpg("\neo\juan.fpg"); //0
+    load_fpg("\neo\p_juan.fpg"); //1
+    load_fpg("\neo\items.fpg"); //2
+    load_pal("\neo\quorbel.fpg");
+    load_fnt("neo\bored.fnt");
+    load_fnt("neo\opcion.fnt");
+    load_fpg("neo\config.fpg");
+    mapa=1;
+    durezas=2;
+    tama¤o=100;
+    equis=320;
+    igriega=240;
+
+  song(0);
+  mapea();
+
+end
+
+//---------------------------------------------------------------------------
+// PROCESO DE JUAN
+//---------------------------------------------------------------------------
+
+
+PROCESS MU¥ECO(x,y,size)
+
+
+PRIVATE
+byte corre;
+word s_llama;
+word s_dialog;
+word s_suenyo;
+word s_llamado;
+word s_leer;
+byte pulsa_ar;
+byte pulsa_ab;
+byte pulsa_d;
+byte pulsa_i;
+byte pulsa_a_i;
+byte pulsa_a_d;
+byte pulsa_ab_i;
+byte pulsa_ab_d;
+byte pulsa_diar;
+byte pulsa_ar_c;
+byte pulsa_ab_c;
+byte pulsa_d_c;
+byte pulsa_i_c;
+byte pulsa_a_i_c;
+byte pulsa_a_d_c;
+byte pulsa_ab_i_c;
+byte pulsa_ab_d_c;
+int jjdcj;
+
+BEGIN
+
+    CTYPE=C_SCROLL;
+    SCROLL.CAMERA=ID;
+    Z=-5;
+    GRAPH=grafico_munyeco;
+    file=0;
+    flags=banderas;
+
+    LOOP
+
+       a=x;b=y;
+
+      // ANDA
+
+        //Anda por las diagonales
+
+
+        if(key(_F1)) equis=munyeco.x; igriega=munyeco.y; configura(); end
+
+
+       if(key(_h))
+        libro_leido=1; llamado=1; m_juan_llama=1;
+        stop_song();
+       end
+
+       if(key(_control))
+        if (!corre)
+         corre=1;
+         pulsa_ar=0;
+         pulsa_ab=0;
+         pulsa_d=0;
+         pulsa_i=0;
+         pulsa_a_i=0;
+         pulsa_a_d=0;
+         pulsa_ab_i=0;
+         pulsa_ab_d=0;
+         pulsa_diar=0;
+         pulsa_ar_c=0;
+         pulsa_ab_c=0;
+         pulsa_d_c=0;
+         pulsa_i_c=0;
+         pulsa_a_i_c=0;
+         pulsa_a_d_c=0;
+         pulsa_ab_i_c=0;
+         pulsa_ab_d_c=0;
+        end
+       else
+        corre=0;
+       end
+
+        if(key(_right)&key(_up)) // Diagonal Arriba-Derecha
+          if (!pulsa_a_d)
+           flags=0;
+           pulsa_a_d=1;
+           if (corre) graph=241; else graph=145; end
+          else
+           if (corre)
+            graph++; x+=10; y-=7;
+            if(graph=>256) graph=241; end
+           else
+            graph++; x+=3; y-=3;
+            if(graph=>180) graph=145; end
+           end
+          end
+        else
+          pulsa_a_d=0;
+        end
+
+        if(key(_left)&key(_up)) // Diagonal Arriba-Izquierda
+          if (!pulsa_a_i)
+            flags=1;
+            pulsa_a_i=1;
+            if (corre) graph=241; else graph=145; end
+          else
+           if (corre)
+            graph++; x-=10; y-=7;
+            if(graph=>256) graph=241; end
+           else
+            graph++; x-=3; y-=3;
+            if(graph=>180) graph=145; end
+           end
+          end
+        else
+          pulsa_a_i=0;
+        end
+
+        if(key(_right)&key(_down)) // Diagonal Abajo-Derecha
+          if (!pulsa_ab_d)
+            flags=0;
+            pulsa_ab_d=1;
+            if (corre) graph=226; else graph=109; end
+          else
+           if (corre)
+            graph++; x+=10; y+=7;
+            if(graph=>241) graph=226; end
+           else
+            graph++; x+=3; y+=3;
+            if(graph=>144) graph=109; end
+           end
+          end
+        else
+          pulsa_ab_d=0;
+        end
+
+        if(key(_left)&key(_down)) // Diagonal Abajo-Izquierda
+          if (!pulsa_ab_i)
+            flags=1;
+            pulsa_ab_i=1;
+            if (corre) graph=226; else graph=109; end
+          else
+           if (corre)
+            graph++; x-=10; y+=7;
+            if(graph=>241) graph=226; end
+           else
+            graph++; x-=3; y+=3;
+            if(graph=>144) graph=109; end
+           end
+          end
+        else
+          pulsa_ab_i=0;
+        end
+
+        //Direcciones comunes (arriba, abajo, izquierda y derecha)
+
+        if(key(_up)&pulsa_a_i==0&pulsa_a_d==0&pulsa_ab==0) // Arriba
+           if (!pulsa_ar)
+            flags=0;
+            pulsa_ar=1;
+            if (corre) graph=196; else graph=37; end
+           else
+            if (corre)
+             graph++; y-=7;
+             if (graph=>211) graph=196; end
+            else
+             graph++; y-=3;
+             if (graph=>72) graph=37; end
+            end
+           end
+        else
+          pulsa_ar=0;
+        end
+
+        if(key(_down)&pulsa_ab_i==0&pulsa_ab_d==0&pulsa_ar==0) // Abajo
+           if (!pulsa_ab)
+            flags=0;
+            pulsa_ab=1;
+            if (corre) graph=181; else graph=1; end
+           else
+            if (corre)
+             graph++; y+=7;
+             if (graph=>196) graph=181; end
+            else
+             graph++; y+=3;
+             if (graph=>36) graph=1; end
+            end
+           end
+        else
+          pulsa_ab=0;
+        end
+
+        if(key(_right)&pulsa_a_d==0&pulsa_ab_d==0&pulsa_i==0) // Derecha
+           if (!pulsa_d)
+            flags=0;
+            pulsa_d=1;
+            if (corre) graph=211; else graph=73; end
+           else
+            if (corre)
+             graph++; x+=10;
+             if (graph=>226) graph=211; end
+            else
+             graph++; x+=3;
+             if (graph=>108) graph=73; end
+            end
+           end
+        else
+          pulsa_d=0;
+        end
+
+        if(key(_left)&pulsa_a_i==0&pulsa_ab_i==0&pulsa_d==0) // Izquierda
+           if (!pulsa_i)
+            flags=1;
+            pulsa_i=1;
+            if (corre) graph=211; else graph=73; end
+           else
+            if (corre)
+             graph++; x-=10;
+             if (graph=>226) graph=211; end
+            else
+             graph++; x-=3;
+             if (graph=>108) graph=73; end
+            end
+           end
+        else
+          pulsa_i=0;
+        end
+
+
+//Comprueba si se topa con Esther
+   IF (collision (TYPE esther))
+    signal(m_esther,s_freeze);
+    if(key(_enter)) dialogos(2); end
+   ELSE
+    signal(m_esther,s_wakeup);
+   END
+
+
+//Comprueba si se topa con Tania
+   IF (collision (TYPE tania))
+    signal(m_tania,s_freeze);
+    if(key(_enter)) dialogos(3); end
+   ELSE
+    signal(m_tania,s_wakeup);
+   END
+
+//Comprueba los sitios por donde entra/sale y las durezas
+
+  IF(pulsa_ar==1)
+   topa=(map_get_pixel(1,durezas,id.x/2,(id.y-30)/2));
+  ELSE
+   topa=(map_get_pixel(1,durezas,id.x/2,(id.y-5)/2));
+  END
+
+          IF (topa==000)
+           x=a; y=b;
+          END
+
+          SWITCH (sitio)
+
+           CASE 0: // Habitaci¢n p.alta casa Juan
+            if (topa==255)
+             banderas=0;
+             grafico_munyeco=73;
+             sitio=1;
+             mapa=3;
+             durezas=4;
+             tama¤o=80;
+             equis=390; igriega=225;
+             mapea();
+             fade_on();
+            end
+           END
+
+           CASE 1: // P.Alta casa Juan
+            IF (topa==254&key(_enter)&llamado==1)
+              fade_off();
+             libro();
+             fade_on();
+            END
+
+            IF (topa==255) //Baja a P.Baja C.Juan
+             fade_off();
+             sitio=2;
+             mapa=5;
+             banderas=1;
+             grafico_munyeco=73;
+             durezas=5+1;
+             tama¤o=80;
+             equis=615; igriega=420;
+             dialogos(1);
+             mapea();
+             fade_on();
+             WHILE(fading)
+              frame;
+             END
+            END
+           END
+
+
+           CASE 2: //P.Baja casa Juan
+            IF (topa==001)
+             x=a; y=b;
+             topa=15;
+            END
+
+            IF (topa==254)
+             banderas=0;
+             grafico_munyeco=1;
+             x=a; y=b;
+             SWITCH (m_juan_llama)
+              CASE 0:
+               CUADRO(3,colorea,12,0,310,240,520,275,101);
+               write(1,320,240,0,juan_txt[0]);
+               write(1,320,255,0,juan_txt[1]);
+               s_llamado=load_pcm("neo\juan4.pcm",0);
+               FOR (suena=1; suena<10;suena++)
+               sound(s_llamado,256,256);
+               END
+               WHILE (espera<100)
+                frame;
+                espera++;
+               END
+               unload_pcm(s_llamado);
+              END
+              CASE 1:
+               IF (m_juan_llama==1&libro_leido==0)
+                CUADRO(3,colorea,12,0,315,240,565,260,101);
+                write(1,320,240,0,juan_txt[2]);
+                s_leer=load_pcm("neo\juan5.pcm",0);
+                FOR (suena=1; suena<10;suena++)
+                 sound(s_leer,200,256);
+                END
+                WHILE (espera<100)
+                 frame;
+                 espera++;
+                END
+                unload_pcm(s_leer);
+               END
+              END
+             END
+             IF (m_juan_llama==1&libro_leido==1)
+              sitio=3;
+              unload_fpg(1);
+              unload_fpg(4);
+              fquorbel=load_fpg("neo\quorbel.fpg");
+              fgente=load_fpg("neo\gente.fpg");
+              load_pal("neo\quorbel.fpg");
+              banderas=0;
+              grafico_munyeco=37;
+              mapa=1;
+              durezas=2;
+              tama¤o=50;
+              equis=610; igriega=424;
+              mapea();
+             END
+             WHILE (espera<100)
+              frame;
+              espera++;
+             END
+             delete_text(all_text);
+             espera=0;
+            END
+
+            IF (topa==255) //Sale a Quorbel
+             sitio=1;
+             mapa=3;
+             durezas=4;
+             equis=190; igriega=447;
+             banderas=0;
+             grafico_munyeco=73;
+             unload_fpg(festher);
+             mapea();
+             fade_on();
+            END
+
+           END
+
+           CASE 3: //Quorbel Este
+            SWITCH (topa)
+             CASE 69: // Entra en la SEX SHOP
+              dskrga();
+              load_fpg("neo\sxshop.fpg");
+              sitio=8;
+              mapa=1;
+              durezas=2;
+              equis=112; igriega=653;
+              tama¤o=100;
+              mapea();
+             END
+             CASE 117: // Entra en el ayuntamiento
+              dskrga();
+              load_fpg("neo\ayntmnto.fpg");
+              sitio=7;
+              mapa=1;
+              durezas=2;
+              equis=780; igriega=500;
+              tama¤o=75;
+              mapea();
+             END
+             CASE 174: // Entra en el SupeRMercado
+              dskrga();
+              load_fpg("neo\rm.fpg");
+              sitio=10;
+              mapa=1;
+              durezas=2;
+              equis=830; igriega=700;
+              tama¤o=100;
+              mapea();
+              fade_on();
+             END
+
+             CASE 250: // Entra al primer plano casa Tania
+              dskrga();
+              load_fpg("neo\p_tania.fpg");
+              sitio=4;
+              mapa=10;
+              durezas=11;
+              equis=410; igriega=410;
+              tama¤o=60;
+              mapea();
+              fade_on();
+             END
+             CASE 253: // Entra en casa de Juan
+              dskrga();
+              load_fpg("neo\p_juan.fpg");
+              sitio=2;
+              mapa=5;
+              banderas=1;
+              grafico_munyeco=37;
+              durezas=5+1;
+              tama¤o=80;
+              equis=585; igriega=495;
+              mapea();
+              fade_on();
+              WHILE(fading)
+               frame;
+              END
+              fade_on();
+             END
+             CASE 255: // Sale del juego (en verdad del pueblo)
+              exit("Fin de beta de Neo Atlantis",0);
+             END
+            END
+           END
+
+           CASE 4: // Primer plano casa Tania
+            IF(topa==255)
+             sitio=3;
+             unload_fpg(1);
+             load_fpg("neo\quorbel.fpg");
+             load_fpg("neo\gente.fpg");
+             banderas=0;
+             grafico_munyeco=37;
+             mapa=1;
+             durezas=2;
+             tama¤o=50;
+             equis=240; igriega=100;
+             mapea();
+             fade_on();
+            END
+            IF(topa==254)
+             sitio=5;
+             mapa=1;
+             durezas=2;
+             tama¤o=69;
+             equis=668; igriega=133;
+             banderas=0;
+             grafico_munyeco=37;
+             mapea();
+             fade_on();
+            END
+           END
+
+           CASE 5: // P.Baja casa Tania
+            IF(topa==255) // Sale a Quorbel
+             sitio=4;
+             mapa=10;
+             durezas=11;
+             tama¤o=60;
+             equis=365; igriega=320;
+             mapea();
+            END
+            IF(topa==254) // Sube a la P.Alta C.Tania
+             sitio=9;
+             mapa=13;
+             durezas=14;
+             tama¤o=80;
+             equis=390; igriega=362;
+             mapea();
+            END
+           END
+
+           CASE 7: // Ayuntamiento
+            IF(topa==255)
+             sitio=3;
+             unload_fpg(1);
+             load_fpg("neo\quorbel.fpg");
+             load_fpg("neo\gente.fpg");
+             banderas=0;
+             grafico_munyeco=37;
+             mapa=1;
+             durezas=2;
+             tama¤o=50;
+             equis=397; igriega=100;
+             mapea();
+             fade_on();
+            END
+           END
+           CASE 8: // SEX SHOP
+            IF(topa==69)
+             x=a; y=b;
+            END
+            IF(topa==255) //Sale a Quorbel
+             sitio=3;
+             unload_fpg(1);
+             load_fpg("neo\quorbel.fpg");
+             load_fpg("neo\gente.fpg");
+             banderas=0;
+             grafico_munyeco=37;
+             mapa=1;
+             durezas=2;
+             tama¤o=50;
+             equis=607; igriega=211;
+             mapea();
+             fade_on();
+            END
+           END
+           CASE 9: // P.Alta casa Tania
+            IF(topa==255) // Baja P.Baja C.Tania
+             sitio=5;
+             mapa=1;
+             durezas=2;
+             tama¤o=69;
+             equis=530; igriega=300;
+             banderas=0;
+             grafico_munyeco=37;
+             unload_fpg(ftania);
+             mapea();
+             fade_on();
+            END
+            //IF(topa==174)
+            // dialogos(3);
+            //END
+           END
+           CASE 10: // SupeRMercado
+            IF(topa==255) //Sale a Quorbel
+             sitio=3;
+             unload_fpg(1);
+             load_fpg("neo\quorbel.fpg");
+             load_fpg("neo\gente.fpg");
+             banderas=0;
+             grafico_munyeco=37;
+             mapa=1;
+             durezas=2;
+             tama¤o=50;
+             equis=530; igriega=400;
+             mapea();
+             fade_on();
+            END
+           END
+          END
+
+        FRAME;
+    END
+
+END
+
+//---------------------------------------------------------------------------
+// PROCESO (casi) PRINCIPAL, PARA PONER EL SCROLL, LAS DUREZAS Y LA Z
+//---------------------------------------------------------------------------
+
+
+PROCESS MAPEA()
+
+ BEGIN
+
+  fade_off();
+  start_scroll(0,1,mapa,0,0,0);
+  munyeco=mu¤eco(equis,igriega,tama¤o);
+  SWITCH (sitio)
+   CASE 2:
+    IF(!coge_neo_sword) items(120,150,1,30); END
+     m_esther=esther(56,318);
+     fade_on();
+     signal(munyeco,s_freeze);
+     WHILE(llamado==0)
+      FRAME;
+     END
+    signal(munyeco,s_wakeup);
+   END
+   CASE 3:
+    objeto(480,288,-10,3,100,1);
+    objeto(289,280,-10,4,100,1);
+    objeto(719,235,-10,5,100,1);
+    objeto(398,34,-10,7,100,1);
+    gente();
+   END
+   CASE 4:
+    objeto(320,128,-10,12,100,1);
+   END
+   CASE 5:
+    objeto(391,358,-10,3,100,1);
+    objeto(211,242,-10,4,100,1);
+    objeto(318,242,-10,5,100,1);
+    objeto(438,240,-10,6,100,1);
+    objeto(481,140,-10,7,100,1);
+    objeto(341,138,-10,8,100,1);
+    objeto(228,140,-10,9,100,1);
+   END
+   CASE 9:
+    m_tania=tania();
+   END
+  END
+  fade_on();
+
+ END
+
+
+//---------------------------------------------------------------------------
+// PROCESO PARA PONER LOS DIALOGOS
+//---------------------------------------------------------------------------
+
+
+PROCESS DIALOGOS(dialogo)
+
+PRIVATE
+v=20;
+word textoid[3];
+s_llama;
+s_dialog;
+s_dialog2;
+s_dialog3;
+s_dialog4;
+s_suenyo;
+cwt;
+
+
+BEGIN
+
+ signal(munyeco,s_freeze);
+
+ frame;
+
+ espera=0;
+
+ SWITCH (dialogo)
+  CASE 1:
+   IF (!llamado)
+    s_llama=load_pcm("neo\esther1.pcm",0);
+    CUADRO(3,colorea,12,0,250,230,490,250,51);
+    textoid=write(1,370,240,4,esther_txt[0]);
+    WHILE (espera<50)
+     IF (espera==0)
+      FOR (cwt=1; cwt<10;cwt++)
+       sound(s_llama,256,256);
+      END
+      FRAME;
+      espera=1;
+     END
+     FRAME;
+     espera++;
+    END
+    unload_pcm(s_llama);
+    delete_text(textoid);
+    espera=0;
+    llamado=1;
+   END
+  END
+
+  CASE 2:
+  signal(m_esther,s_freeze);
+  m_esther.graph=116;
+  munyeco.graph=37;
+  IF (m_juan_llama==0)
+   s_dialog=load_pcm("neo\esther2.pcm",0);
+   CUADRO(3,colorea,12,0,230,230,510,250,51);
+   textoid=write(1,370,240,4,esther_txt[1]);
+   WHILE (espera<50)
+    IF (espera==0)
+     espera=1;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_dialog,256,256);
+     END
+     FRAME;
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+   delete_text(textoid);
+
+   unload_pcm(s_dialog);
+   s_suenyo=load_pcm("neo\juan1.pcm",0);
+   CUADRO(3,colorea,12,0,240,230,500,270,121);
+   textoid=write(1,370,240,4,juan_txt[3]);
+   textoid[1]=write(1,370,260,4,juan_txt[4]);
+   WHILE (espera<120)
+    IF (espera==0)
+     espera=1;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_suenyo,256,256);
+     END
+     FRAME;
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+   delete_text(textoid);
+   delete_text(textoid[1]);
+
+   unload_pcm(s_suenyo);
+   s_dialog2=load_pcm("neo\esther3.pcm",0);
+   CUADRO(3,colorea,12,0,315,230,425,250,51);
+   textoid=write(1,370,240,4,esther_txt[2]);
+
+   WHILE (espera<50)
+    IF (espera==0)
+     espera=1;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_dialog2,256,256);
+     END
+     FRAME;
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+   delete_text(textoid);
+
+   unload_pcm(s_dialog2);
+   s_dialog3=load_pcm("neo\juan2.pcm",0);
+   CUADRO(3,colorea,12,0,240,200,510,380,559+1);
+   FOR (cwt=5;cwt<13;cwt++)
+    textoid=write(1,370,200+v,4,juan_txt[cwt]);
+    v+=20;
+   END
+
+   WHILE (espera<559)
+    IF (espera==0)
+     espera=1;
+     FRAME;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_dialog3,256,256);
+     END
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+
+   delete_text(all_text);
+   unload_pcm(s_dialog3);
+  END
+
+
+   s_dialog4=load_pcm("neo\esther4.pcm",0);
+   CUADRO(3,colorea,12,0,250,230,490,270,101);
+   textoid=write(1,370,240,4,esther_txt[3]);
+   textoid[1]=write(1,370,260,4,esther_txt[4]);
+   WHILE (espera<100)
+    IF (espera==0)
+     espera=1;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_dialog4,256,256);
+     END
+     FRAME;
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+   delete_text(textoid);
+   delete_text(textoid[1]);
+
+   unload_pcm(s_dialog4);
+
+   m_juan_llama=1;
+   m_esther.graph=1;
+  END
+
+  CASE 3:
+   s_dialog=load_pcm("neo\tania1.pcm",0);
+   CUADRO(3,colorea,12,0,200,230,540,270,115);
+   textoid=write(1,370,240,4,tania_txt[0]);
+   textoid[1]=write(1,370,260,4,tania_txt[1]);
+   WHILE (espera<115)
+    IF (espera==0)
+     espera=1;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_dialog,256,256);
+     END
+     FRAME;
+
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+   delete_text(textoid);
+   delete_text(textoid[1]);
+
+   unload_pcm(s_dialog);
+
+   s_dialog2=load_pcm("neo\juan6.pcm",0);
+   CUADRO(3,colorea,12,0,190,230,550,290,130);
+   textoid=write(1,370,240,4,juan_txt[13]);
+   textoid[1]=write(1,370,260,4,juan_txt[14]);
+   textoid[2]=write(1,370,280,4,juan_txt[15]);
+   WHILE (espera<130)
+    IF (espera==0)
+     espera=1;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_dialog2,256,256);
+     END
+     FRAME;
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+   delete_text(textoid);
+   delete_text(textoid[1]);
+   delete_text(textoid[2]);
+
+   unload_pcm(s_dialog2);
+
+   s_dialog=load_pcm("neo\tania2.pcm",0);
+   CUADRO(3,colorea,12,0,190,230,550,270,130);
+   textoid=write(1,370,240,4,tania_txt[2]);
+   textoid[1]=write(1,370,260,4,tania_txt[3]);
+   WHILE (espera<130)
+    IF (espera==0)
+     espera=1;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_dialog,256,256);
+     END
+     FRAME;
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+   delete_text(textoid);
+   delete_text(textoid[1]);
+
+   unload_pcm(s_dialog);
+
+   s_dialog2=load_pcm("neo\juan7.pcm",0);
+   CUADRO(3,colorea,12,0,190,230,550,270,130);
+   textoid=write(1,370,240,4,juan_txt[16]);
+   textoid[1]=write(1,370,260,4,juan_txt[17]);
+   WHILE (espera<130)
+    IF (espera==0)
+     espera=1;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_dialog2,256,256);
+     END
+     FRAME;
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+   delete_text(textoid);
+   delete_text(textoid[1]);
+
+   unload_pcm(s_dialog2);
+
+   s_dialog2=load_pcm("neo\juan8.pcm",0);
+   CUADRO(3,colorea,12,0,170,230,570,290,160);
+   textoid=write(1,370,240,4,juan_txt[18]);
+   textoid[1]=write(1,370,260,4,juan_txt[19]);
+   textoid[2]=write(1,370,280,4,juan_txt[20]);
+   WHILE (espera<160)
+    IF (espera==0)
+     espera=1;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_dialog2,256,256);
+     END
+     FRAME;
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+   delete_text(textoid);
+   delete_text(textoid[1]);
+   delete_text(textoid[2]);
+
+   unload_pcm(s_dialog2);
+
+   s_dialog=load_pcm("neo\tania3.pcm",0);
+   CUADRO(3,colorea,12,0,185,230,555,290,200);
+   textoid=write(1,370,240,4,tania_txt[4]);
+   textoid[1]=write(1,370,260,4,tania_txt[5]);
+   textoid[2]=write(1,370,280,4,tania_txt[6]);
+   WHILE (espera<200)
+    IF (espera==0)
+     espera=1;
+     FOR (cwt=1; cwt<10;cwt++)
+      sound(s_dialog,256,256);
+     END
+     FRAME;
+    END
+     FRAME;
+    espera++;
+   END
+   espera=0;
+   delete_text(textoid);
+   delete_text(textoid[1]);
+   delete_text(textoid[2]);
+
+   unload_pcm(s_dialog);
+  END
+
+ END
+
+ munyeco.graph=1;
+ signal(munyeco,s_wakeup);
+
+END
+
+//---------------------------------------------------------------------------
+// PROCESO PARA EL LIBRO
+//---------------------------------------------------------------------------
+
+
+PROCESS LIBRO()
+
+PRIVATE
+pasa_pg=1;
+s_orpresa;
+nar;
+
+BEGIN
+
+ unload_fpg(1);
+ libro_leido=0;
+ load_fpg("neo\libro.fpg");
+ s_orpresa=load_pcm("neo\juan3.pcm",0);
+ start_scroll(0,1,pasa_pg,0,0,0);
+ fade_on();
+ FRAME(4000);
+ LOOP
+  LOOP
+   IF (key(_enter)) break; END
+    FRAME;
+  END
+   pasa_pg++;
+   fade_off();
+   IF (pasa_pg==2)
+    FOR (nar=1; nar<10;nar++)
+     sound(s_orpresa,256,256);
+    END
+   END
+     IF (pasa_pg=>6)
+      unload_pcm(s_orpresa);
+      break;
+     END
+   start_scroll(0,1,pasa_pg,0,0,0);
+   fade_on();
+   FRAME(7000);
+ END
+  unload_fpg(1);
+  load_fpg("neo\p_juan.fpg");
+  equis=700; igriega=390;
+  libro_leido=1;
+  mapea();
+END
+
+//---------------------------------------------------------------------------
+// PROCESO PARA PONER A ESTHER
+//---------------------------------------------------------------------------
+
+PROCESS ESTHER(x,y)
+
+BEGIN
+
+festher=load_fpg("neo\esther.fpg");
+file=festher;
+size=90;
+ctype=c_scroll;
+
+ LOOP
+   graph=1;
+  REPEAT
+   x+=2;
+   flags=0;
+   graph++; if (graph==116) graph=1; end
+   FRAME;
+  UNTIL (x>179)
+
+  REPEAT
+   x-=2;
+   flags=1;
+   graph++; if (graph==116) graph=1; end
+   FRAME;
+  UNTIL (x<56)
+ END
+
+END
+
+//---------------------------------------------------------------------------
+// PROCESO PARA PONER A TANIA
+//---------------------------------------------------------------------------
+
+PROCESS TANIA()
+
+BEGIN
+
+ftania=load_fpg("neo\tania.fpg");
+file=ftania;
+size=90;
+x=400; y=240;
+ctype=c_scroll;
+
+ LOOP
+   graph=73;
+  REPEAT
+   x++;
+   flags=0;
+   graph++; if (graph==109) graph=73; end
+   FRAME;
+  UNTIL (x>660)
+
+  REPEAT
+   x--;
+   flags=1;
+   graph++; if (graph==109) graph=73; end
+   FRAME;
+  UNTIL (x<365)
+ END
+
+END
+
+//---------------------------------------------------------------------------
+// PROCESO PARA ITEMS
+//---------------------------------------------------------------------------
+
+PROCESS ITEMS(x,y,graph,size)
+
+PRIVATE
+s_coge_item;
+retardo;
+
+BEGIN
+
+file=2;
+ctype=c_scroll;
+s_coge_item=load_pcm("neo\cogeitem.pcm",0);
+
+  LOOP
+   IF((collision(TYPE mu¤eco))&coge_neo_sword==0)
+     coge_neo_sword=1;
+    FOR(retardo=0;retardo<10;retardo++)
+     sound(s_coge_item,256,256);
+    END
+    break;
+    FRAME;
+   END
+   FRAME;
+  END
+
+     WHILE (espera<4)
+       frame;
+       espera++;
+     END
+
+ unload_pcm(s_coge_item);
+
+END
+
+//---------------------------------------------------------------------------
+// PROCESO PARA CUADRO DE DIALOGOS DE TEXTO
+//---------------------------------------------------------------------------
+
+PROCESS CUADRO(t,c,o,r,e0,i0,e1,i1,tiempo)
+
+PRIVATE
+word id_cuadro[1];
+unmomento;
+
+BEGIN
+
+  CTYPE=C_SCROLL;
+  unmomento=1;
+
+ REPEAT
+
+  id_cuadro[0]=draw(t,c,o,r,e0,i0,e1,i1);
+  id_cuadro[1]=draw(2,2,o,r,e0-1,i0-1,e1+1,i1+1);
+  FRAME;
+  delete_draw(id_cuadro[0]);
+  delete_draw(id_cuadro[1]);
+  unmomento++;
+
+ UNTIL(unmomento=>tiempo)
+
+END
+
+//---------------------------------------------------------------------------
+// PROCESO PARA MENU DE CONFIGURACION
+//---------------------------------------------------------------------------
+
+PROCESS CONFIGURA()
+
+PRIVATE
+word t_opciones[]=
+
+"Definir teclas",
+"Cargar juego",
+"Guardar juego",
+"Colores",
+"Creditos",
+"Sonido",
+"Musica",
+"Salir";
+
+borra_cristal1=24;
+word cristal[8];
+word cristal2[8];
+textos_opciones;
+tabla;
+fila=140;
+i0=133;
+i1=147;
+pone_cristal=157;
+I;
+int opcion;
+borrado;
+baja_opcion;
+sube_opcion;
+mueve_piedra=420;
+s_cristal;
+m_fondo;
+
+BEGIN
+fade_off();
+stop_song();
+cfg_tierra();
+signal(munyeco,s_freeze);
+//load_fnt("neo\bored.fnt");
+//load_fnt("neo\opcion.fnt");
+//load_fpg("neo\config.fpg");
+load_pal("neo\config.fpg");
+s_cristal=load_pcm("neo\parrot.pcm",0);
+m_fondo=load_wav("neo\cfg.wav",1);
+stop_scroll(0);
+set_fps(20,1);
+fade_on();
+write(2,90,105,4,"Opciones");
+
+x=420;
+moviendo=x;
+y=280;
+z=-500;
+file=3;
+graph=52;
+size=70;
+
+//Textos, casquillos y cristales
+FOR (espera=0;espera<8;espera++)
+  textos_opciones=write(3,87,140+I,4,t_opciones[espera]);
+  xput(3,53,15,fila,0,30,0,0);
+  xput(3,53,165,fila,0,30,1,0);
+  cristal[espera]=draw(3,90,10,0,24,i0,157,i1); //173
+  i0+=40; i1+=40; fila+=40; I+=40;
+END
+
+opcion=0;
+i0=133;
+i1=147;
+sound(m_fondo,200,256);
+
+LOOP
+
+ WHILE (espera<=15)
+  espera++;
+  FRAME;
+ END
+
+ IF(key(_enter))
+  SWITCH(opcion)
+   CASE 0:
+    REPEAT
+      x+=4;
+      FRAME;
+    UNTIL (x=>870);
+   END
+   CASE 1:
+     load("G001.dat",&datos_neo);
+     libro_leido=datos_neo.libro_leido;
+     m_juan_llama=datos_neo.m_juan_llama;
+     llamado=datos_neo.llamado;
+     coge_neo_sword=datos_neo.coge_neo_sword;
+     //mapa=datos_neo.mapa;
+     //durezas=datos_neo.durezas;
+     equis=datos_neo.equis;
+     igriega=datos_neo.igriega;
+     //sitio=datos_neo.sitio;
+   END
+   CASE 2:
+     datos_neo.coge_neo_sword=coge_neo_sword;
+     datos_neo.libro_leido=libro_leido;
+     datos_neo.m_juan_llama=m_juan_llama;
+     datos_neo.llamado=llamado;
+     datos_neo.mapa=mapa;
+     datos_neo.durezas=durezas;
+     datos_neo.equis=munyeco.x;
+     datos_neo.igriega=munyeco.y;
+     datos_neo.sitio=sitio;
+
+     save("G001.dat",&datos_neo, sizeof(datos_neo));
+   END
+   CASE 3:
+    tabla_colores();
+    REPEAT
+      x+=4;
+      moviendo=x;
+      IF(key(_esc)) x=862; END
+      FRAME;
+    UNTIL (x=>870);
+    REPEAT
+      x-=4;
+      moviendo=x;
+      IF(key(_esc)) x=428; END
+      FRAME;
+    UNTIL (x==420);
+   END
+   CASE 4:
+    BREAK;
+   END
+   CASE 5:
+    BREAK;
+   END
+   CASE 6:
+    BREAK;
+   END
+   CASE 7:
+    BREAK;
+   END
+  END
+ END
+
+
+ IF(key(_down))
+  i1+=40; i0+=40; borra_cristal1=24;
+  borrado=0; pone_cristal=157; opcion++;
+  baja_opcion=1;
+  sound(s_cristal,256,256);
+ END
+
+ IF(key(_up))
+  i1-=40; i0-=40; borra_cristal1=24;
+  borrado=0; pone_cristal=157; opcion--;
+  sube_opcion=1;
+  sound(s_cristal,256,256);
+ END
+
+ IF(opcion==8)
+  opcion=0; borrado=1; baja_opcion=0;
+  i0=133; i1=147; pone_cristal=157;
+  delete_draw(cristal[0]);
+   REPEAT
+    cristal[7]=draw(3,90,10,0,pone_cristal,413,157,427);
+    cristal2[opcion]=draw(3,90,10,0,borra_cristal1,i0,157,i1);
+    borra_cristal1+=15; pone_cristal-=17;
+    FRAME;
+    delete_draw(cristal[7]);
+    delete_draw(cristal2[opcion]);
+   UNTIL (pone_cristal=<24)
+   cristal[7]=draw(3,90,10,0,pone_cristal,413,157,427);
+ END
+
+ IF(opcion==-1)
+  opcion=7; borrado=1; sube_opcion=0;
+  i0=413; i1=427; pone_cristal=157;
+  delete_draw(cristal[7]);
+   REPEAT
+    cristal[0]=draw(3,90,10,0,pone_cristal,133,157,147);
+    cristal2[opcion]=draw(3,90,10,0,borra_cristal1,i0,157,i1);
+    borra_cristal1+=15; pone_cristal-=17;
+    FRAME;
+    delete_draw(cristal[0]);
+    delete_draw(cristal2[opcion]);
+   UNTIL (pone_cristal=<24)
+   cristal[0]=draw(3,90,10,0,pone_cristal,133,157,147);
+ END
+
+
+ IF(key(_ESC)) BREAK; END
+
+// Para bajar de opcion
+ IF(borrado==0&baja_opcion==1) delete_draw(cristal[opcion]);
+
+     REPEAT
+      cristal2[opcion]=draw(3,90,10,0,borra_cristal1,i0,157,i1);
+      cristal[opcion-1]=draw(3,90,10,0,pone_cristal,i0-40,157,i1-40);
+      borra_cristal1+=15; pone_cristal-=17;
+      FRAME;
+      delete_draw(cristal2[opcion]);
+      delete_draw(cristal[opcion-1]);
+     UNTIL (borra_cristal1=>157)
+      pone_cristal+=17;
+      cristal[opcion-1]=draw(3,90,10,0,pone_cristal,i0-40,157,i1-40);
+      borrado=1; baja_opcion=0;
+ END
+
+ IF(borrado==0&baja_opcion==0&sube_opcion==0)
+
+ FRAME(1000); //Espera hasta que el cristal se borre por completo
+
+ delete_draw(cristal[opcion]);
+
+     REPEAT
+      cristal2[opcion]=draw(3,90,10,0,borra_cristal1,i0,157,i1);
+      borra_cristal1+=15;
+      FRAME;
+      delete_draw(cristal2[opcion]);
+     UNTIL (borra_cristal1=>157)
+   FRAME(1000); //Espera hasta que el cristal se borre por completo
+  borrado=1; baja_opcion=0;
+ END
+
+
+// Para subir opcion
+ IF(borrado==0&sube_opcion==1)
+     delete_draw(cristal[opcion]);
+
+     REPEAT
+      cristal[opcion+1]=draw(3,90,10,0,pone_cristal,i0+40,157,i1+40);
+      cristal2[opcion]=draw(3,90,10,0,borra_cristal1,i0,157,i1);
+      pone_cristal-=17; borra_cristal1+=15;
+      FRAME;
+      delete_draw(cristal2[opcion]);
+      delete_draw(cristal[opcion+1]);
+     UNTIL (pone_cristal=<24)
+      cristal[opcion+1]=draw(3,90,10,0,pone_cristal,i0+40,157,i1+40);
+
+  borrado=1; sube_opcion=0;
+ END
+
+  FRAME;
+END
+  delete_draw(all_drawing);
+  delete_text(all_text);
+  load_pal("neo\quorbel.fpg");
+//  unload_fpg(3);
+//  unload_fnt(2);
+//  unload_fnt(3);
+//  unload_pcm(s_cristal);
+  signal(TYPE cfg_tierra,s_kill);
+  set_fps(30,1);
+
+  mapea();
+
+ END
+
+//---------------------------------------------------------------------------
+// PROCESO PARA MENU DE CONFIGURACION (TIERRA)
+//---------------------------------------------------------------------------
+
+PROCESS CFG_TIERRA()
+
+BEGIN
+
+x=320;
+y=50;
+file=3;
+graph=1;
+
+ LOOP
+
+  graph++;
+  FRAME;
+
+  IF(graph=>26) graph=1; END
+  FRAME;
+ END
+
+END
+
+//---------------------------------------------------------------------------
+// PROCESO PARA LA TABLA DE COLORES EN EL MENU DE CONFIGURACION
+//---------------------------------------------------------------------------
+
+PROCESS TABLA_COLORES()
+
+PRIVATE
+
+word id_tabla[15,15];
+id_elige;
+filas=1;
+columnas=1;
+eq0=300;
+iq0=130;
+eq1=320;
+iq1=150;
+eq2=299;
+iq2=129;
+eq3=319;
+iq3=149;
+id_escribe;
+colorcillo;
+
+BEGIN
+
+ FOR(columnas=1; columnas<16; columnas++)
+  FOR(filas=1; filas<16; filas++)
+   id_tabla[filas,columnas]=draw(3,colorcillo,15,0,eq0,iq0,eq1,iq1);
+   eq0+=20; eq1+=20;
+   colorcillo++;
+  END
+  eq0=300; eq1=320;
+  iq0+=20; iq1+=20;
+  colorcillo++;
+ END
+
+WHILE(moviendo<870)
+ FRAME;
+END
+
+signal(TYPE configura,s_freeze);
+set_fps(20,0);
+colorea=0;
+
+LOOP
+ id_elige=draw(2,198,15,0,eq2,iq2,eq3,iq3);
+ FRAME;
+ delete_draw(id_elige);
+ IF(key(_right)&eq2<579) eq2+=20; eq3+=20; colorea++; END
+ IF(key(_left)&eq2>299) eq2-=20; eq3-=20; colorea--; END
+ IF(key(_up)&iq2>129) iq2-=20; iq3-=20; colorea-=16; END
+ IF(key(_down)&iq2<409) iq2+=20; iq3+=20; colorea+=16; END
+ IF(key(_esc)) BREAK; colorea=90; END
+ IF(key(_enter)) id_escribe=write(3,440,450,4,"Color asignado");
+ FRAME(2000); delete_text(id_escribe); BREAK; END
+END
+
+set_fps(20,1);
+signal(TYPE configura,s_wakeup);
+WHILE(moviendo>420)
+ FRAME;
+END
+ FOR(filas=1; filas<16; filas++)
+  FOR(columnas=1; columnas<16; columnas++)
+   delete_draw(id_tabla[filas,columnas]);
+  END
+ END
+
+END
+
+//---------------------------------------------------------------------------
+// PROCESO PARA PONER OBJETOS INDEPENDIENTES
+//---------------------------------------------------------------------------
+
+
+PROCESS OBJETO(x,y,z,graph,size,file)
+
+BEGIN
+CTYPE=C_SCROLL;
+ LOOP
+  FRAME;
+ END
+END
+
+
+//---------------------------------------------------------------------------
+// PROCESO PARA PONER GENTE DE MODO ALEATORIO
+//---------------------------------------------------------------------------
+
+
+PROCESS GENTE()
+
+PRIVATE
+aleatorio;
+cambio;
+cambiado;
+grafico;
+camino;
+subiendo;
+dicho;
+sube;
+
+BEGIN
+CTYPE=C_SCROLL;
+ LOOP
+  FRAME(7000);
+  aleatorio=rand(0,10000);
+
+  IF(aleatorio>5000&aleatorio<9700)
+   flags=rand(0,1);
+   grafico=rand(0,1);
+   camino=rand(0,10);
+   dicho=0; subiendo=0;
+   if(grafico==0) graph=1; end
+   if(grafico==1) graph=19; end
+   if(grafico==2) graph=37; end
+   y=415; file=4;
+   if(flags==0) x=-5; else x=805; end
+   LOOP
+    graph++;
+
+   if(grafico==0) // Mira qu‚ mu¤eco es para dar vueltas graph
+     if(!subiendo)
+      if(graph==19) graph=1; end
+     else
+      if(graph==73) graph=55; end
+     end
+   else
+    if(grafico==1)
+     if(!subiendo)
+      if(graph==37) graph=19; end
+     else
+      if(graph==91) graph=73; end
+     end
+    else
+     if(grafico==2)
+      if(graph==55) graph=37; end
+     end
+    end
+   end
+
+    if(camino==0)
+     if(!flags) x+=3; else x-=3; end
+    else
+     if(!flags)
+      if(x<200) x+=3; end // Camina hacia la derecha hasta x=200
+      if(grafico<>2)
+       if(x=>200)
+        if(!dicho) // Pone grafico para subir ("dicho" para 1 sola vez)
+         dicho=1;
+         if(!grafico) graph=55; end
+         if(grafico) graph=73; end
+         subiendo=1;
+        end
+        if(y<=320&y=>255) x++; end
+        y-=3;
+       end
+      end
+     else
+      x-=3;
+     end
+    end
+     FRAME;
+    cambio=rand(0,7700);
+    if(!flags)
+     if(cambio=>7700&x>300&cambiado==0) flags=flags xor 1; cambiado=1; end
+    else
+     if(cambio=>7700&x<500&cambiado==0) flags=flags xor 1; cambiado=1; end
+    end
+    if(x>825 OR x<-15) BREAK; end
+    if(y<-5) BREAK; end
+   END
+   cambiado=0;
+  END
+
+ END
+END
+
+//---------------------------------------------------------------------------
+// PROCESO PARA DESCARGAR LOS GRAFICOS DE GENTE Y QUORBEL
+//---------------------------------------------------------------------------
+
+
+PROCESS DSKRGA()
+
+BEGIN
+ unload_fpg(fquorbel);
+ unload_fpg(fgente);
+END
